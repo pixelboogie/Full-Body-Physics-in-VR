@@ -7,25 +7,39 @@ public class ContinuousMovementPhysics : MonoBehaviour
 {
 
     public float speed = 1;
+    public float jumpVelocity = 7;
+    public float jumpHeight = 1.5f;
+    public bool onlyMoveWhenGrounded = false;
+
     public InputActionProperty moveInputSource;
+    public InputActionProperty jumpInputSource;
+
     public Rigidbody rb;
     public LayerMask groundLayer;
     public Transform directionSource;
     public CapsuleCollider bodyCollider;
     private Vector2 inputMoveAxis;
 
+    private bool isGrounded;
 
 
     void Update()
     {
         inputMoveAxis = moveInputSource.action.ReadValue<Vector2>();
+
+        bool jumpInput = jumpInputSource.action.WasPressedThisFrame();
+
+        if(jumpInput && isGrounded){
+            jumpVelocity = Mathf.Sqrt(2 * -Physics.gravity.y * jumpHeight);
+            rb.velocity = Vector3.up * jumpVelocity;
+        }
     }
 
     void FixedUpdate(){
 
-        bool isGrounded = CheckIfGrounded();
+        isGrounded = CheckIfGrounded();
 
-        if(isGrounded){
+        if(!onlyMoveWhenGrounded || (onlyMoveWhenGrounded && isGrounded)){
             Quaternion yaw = Quaternion.Euler(0, directionSource.eulerAngles.y,0);
             Vector3 direction = yaw * new Vector3(inputMoveAxis.x, 0, inputMoveAxis.y);
 

@@ -23,8 +23,6 @@ public class MovingPlatform : MonoBehaviour
         Vector3 direction = (targetPosition - rb.position).normalized;
         rb.MovePosition(rb.position + speed * direction * Time.fixedDeltaTime);
 
-        Debug.Log($"direction {direction}");
-
         if(Vector3.Distance(rb.position, targetPosition) < 0.05f){
             if(targetPosition == p1.position)
                 targetPosition = p2.position;
